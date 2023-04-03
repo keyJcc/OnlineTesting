@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.mz.auth.mapper.UserMapper">
+
+    <sql id="whereSql">
+        <where>
+            <if test="username!=null and username !=''">
+                and username like concat('%',#{username},'%')
+            </if>
+            <if test="email!=null and email !=''">
+                and email like concat('%',#{email},'%')
+            </if>
+        </where>
+    </sql>
+
+    <select id="queryTotal" parameterType="userQuery" resultType="java.lang.Long">
+        select count(*) from t_user
+        <include refid="whereSql"/>
+    </select>
+    <!--    分页的数据-->
+    <select id="queryData" parameterType="userQuery" resultMap="userMap">
+        select * from t_user
+        <include refid="whereSql"/>
+        limit #{offset},#{page}
+    </select>
+    <resultMap id="userMap" type="User">
+        <id property="id" column="id" ></id>
+        <collection property="roles" column="id" select="getRoleByUserid"></collection>
+    </resultMap>
+
+    <select id="getRoleByUserid" parameterType="java.lang.Long" resultType="Role">
+        select r.*
+        from t_user_role ur
+        join t_role r on ur.roleid = r.id
+        where ur.userid = #{id}
+    </select>
+</mapper>

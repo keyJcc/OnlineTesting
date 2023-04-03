@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.mz.auth.mapper.QuestionMapper">
+
+    <select id = "findAll" resultType = "com.mz.auth.entity.Question">select * from exam_questionbank</select>
+
+    <!--    查询分页数据总条数-->
+    <select id="queryTotal" parameterType = "QuestionQuery" resultType="java.lang.Long">
+        select count(*) from exam_questionbank <include refid="whereSql"></include>
+    </select>
+
+    <!--  将查询的数据分页处理，并且排序 -->
+    <select id = "queryData" parameterType="QuestionQuery" resultMap="questionMap">
+        select e.*, u.id uid,u.username uname from exam_questionbank e join t_user u on e.creatorId=u.id
+        <include refid="whereSql"></include>
+        order by
+        e.createTime DESC
+        LIMIT #{offset},#{page}
+    </select>
+    <resultMap id="questionMap" type="com.mz.auth.entity.Question">
+        <id column = "id" property="id"></id>
+        <result column="uid" property="user.id"></result>
+        <result column="uname" property="user.username"></result>
+    </resultMap>
+
+    <sql id = "whereSql">
+        <where>
+            <if test='questionTitle!=null and questionTitle.contains("")'>
+                and questionTitle like concat('%',#{questionTitle},'%')
+            </if>
+        </where>
+    </sql>
+</mapper>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>后台管理系统模板</title>
+    <link rel="icon" href="favicon.ico" type="image/ico">
+    <meta name="keywords" content="模板">
+    <meta name="description" content="后台管理系统的HTML模板。">
+    <meta name="author" content="SoulCoder">
+    <div th:include="~{views/common/include :: cssStyle }"></div>
+    <!-- 引入bootstrapmarkdown样式-->
+    <link rel="stylesheet" th:href="@{/static/js/plugins/markdown/css/bootstrap-markdown.min.css}">
+    <!--时间选择插件-->
+    <link rel="stylesheet" th:href="@{/static/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css}">
+    <!--日期选择插件-->
+    <link rel="stylesheet" th:href="@{/static/js/bootstrap-datepicker/bootstrap-datepicker3.min.css}">
+</head>
+<body>
+<div class="coder-layout-web">
+    <div class="coder-layout-container">
+        <!--左侧导航-->
+        <div th:include="~{views/common/include :: #asideStyle }"></div>
+        <!--End 左侧导航-->
+        <!--头部信息-->
+        <div th:include="~{views/common/include :: #headerStyle }"></div>
+        <!--End 头部信息-->
+        <!--页面主要内容-->
+        <main class="coder-layout-content">
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-toolbar clearfix">
+                            </div>
+
+                            <!-- 新增表单start-->
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title" id="addPapperModalLabel">新增题目:</h4>
+                                        </div>
+                                        <form id="questionAddForm" method="post" >
+                                            <div class="modal-body">
+                                                <!-- 题目名称-->
+                                                <!--name="questionTitle"该name值要传到后台 后台接收该参数，id="a_questionTitle根据id的值a_questionTitle获取输入题目的内容-->
+                                                <div class="form-group">
+                                                    <label  class="control-label">题目名称：</label>
+                                                    <input type="text" class="form-control" name="questionTitle" id="a_questionTitle">
+                                                </div>
+                                                <!-- 题目类型-->
+                                                <div class="form-group">
+                                                    <label class="control-label">题目类型</label>
+                                                       <!--（1）选择题目类型时触发方法 onchange="changeType()"，根据题型id="questionTypeSelectId获取值，1234
+                                                       name="q_typeid" 该name值要传到后台 后台接收该参数-->
+                                                        <select class="form-control" onchange="changeType()" id="questionTypeSelectId" name="q_typeid" size="1">
+                                                            <option value="0">请选择</option>
+                                                            <option value="1">选择题</option>
+                                                            <option value="2">填空题</option>
+                                                            <option value="3">判断题</option>
+                                                            <option value="4">简答题</option>
+                                                        </select>
+
+                                                </div>
+                                                <!-- （3）切换题型区域-->
+                                                <!-- 1选择题选项-->
+                                                <div class="form-group" id="xztArea" style="display:none">
+                                                    <input type="text" class="form-control" placeholder="请输入选项A的内容" name="optionA" id="optionA">
+                                                    <input type="text" class="form-control" placeholder="请输入选项B的内容" name="optionB" id="optionB">
+                                                    <input type="text" class="form-control" placeholder="请输入选项C的内容" name="optionC" id="optionC">
+                                                    <input type="text" class="form-control" placeholder="请输入选项D的内容" name="optionD" id="optionD">
+                                                    <input type="text" class="form-control" placeholder="请输入问题正确答案" name="xzt_optionAnswer" >
+                                                </div>
+                                                <!-- 2填空题选项-->
+                                                <div class="form-group" id="tktArea" style="display:none">
+                                                    <input type="text" name="tkt_optionAnswer" class="form-control" placeholder="请输入问题正确答案">
+                                                </div>
+                                                <!-- 3判断题选项-->
+                                                <div class="form-group" id="pdtArea" style="display:none">
+                                                    <div class="example-box">
+                                                        <label class="soulCoder-radio radio-inline radio-primary">
+                                                            <input type="radio" name="pdt_optionAnswer" value="1"><span>正确</span>
+                                                        </label>
+                                                        <label class="soulCoder-radio radio-inline radio-primary">
+                                                            <input type="radio" name="pdt_optionAnswer" value="0"><span>错误</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <!-- 4简答题选项-->
+                                                <div class="form-group" id="jdtArea" style="display:none">
+                                                    老师到时候自行给分数
+                                                </div>
+
+                                                <!-- 设定分数-->
+                                                <div class="form-group">
+                                                    <label  class="control-label">设定分数：</label>
+                                                    <input type="text" class="form-control" name="grade" id="grade">
+                                                </div>
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" onclick="javascript:history.back(-1)" data-dismiss="modal">返回</button>
+                                                <button type="button" data-method='save' class="btn btn-primary">保存</button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                            <!-- 新增表单结束-->
+
+
+
+
+                    </div>
+                </div>
+            </div>
+    </div>
+
+    </main>
+
+</div>
+</div>
+
+<div th:include="~{views/common/include :: #jsStyle}"></div>
+<script type="text/javascript"  th:src="@{/static/js/jquery.serialize-object.min.js}"></script>
+
+<script type="text/javascript">
+
+    //（2）当选择类型下来改变的时候 ，出现对应的模板
+    function changeType(){
+        var typeId = $("#questionTypeSelectId").val()//先获取题型的值typeId，再根据题型的值展示对应的题型区域，如1，则展示选择题区域，其他三个，隐藏
+        switch(typeId){
+            case '1':
+                $("#xztArea").show();
+                $("#tktArea").hide();
+                $("#pdtArea").hide();
+                $("#jdtArea").hide();
+                break;
+            case '2':
+                $("#tktArea").show();
+                $("#xztArea").hide();
+                $("#pdtArea").hide();
+                $("#jdtArea").hide();
+                break;
+            case '3':
+                $("#pdtArea").show();
+                $("#xztArea").hide();
+                $("#tktArea").hide();
+                $("#jdtArea").hide();
+                break;
+            case '4':
+                $("#jdtArea").show();
+                $("#xztArea").hide();
+                $("#tktArea").hide();
+                $("#pdtArea").hide();
+                break;
+
+        }
+      
+    }
+
+    $(document).ready(function(e){
+        //绑定事件
+        $("button,a").on('click',function(){
+            //获取到 a标签里面配置 data-method
+            var methodName = $(this).data('method');
+            if(methodName){
+                doMethod[methodName]();
+            }
+        });
+        var doMethod = {
+              //保存问题的方法
+            save(){
+                //（1）获取表单里面参数
+                var formParamObj = $("#questionAddForm").serializeObject();
+                if(formParamObj.q_typeid == '1'){
+                    //选择题
+                    //   optionA : formParamObj.optionA, 右边 赋值给 左边
+                    formParamObj.questionXztOptions={
+                        optionA:formParamObj.optionA,
+                        optionB:formParamObj.optionB,
+                        optionC:formParamObj.optionC,
+                        optionD:formParamObj.optionD
+                    }
+                    formParamObj.questionAnswer = formParamObj.xzt_optionAnswer
+                }else if(formParamObj.q_typeid == '2'){
+                    //填空题
+                    formParamObj.questionAnswer = formParamObj.tkt_optionAnswer
+                }else if(formParamObj.q_typeid == '3'){
+                    //判断题
+                    formParamObj.questionAnswer = formParamObj.pdt_optionAnswer
+                }
+                //（2）发送ajax请求到后台
+                $.ajax({
+                    url:"/question/addQuestion",
+                    type:"POST",
+                    dataType:"json",
+                    data:JSON.stringify(formParamObj),
+                    contentType:'application/json;charset=utf-8',
+                    success:function(data){
+                        if(data.isSuccess){
+                            $.confirm({
+                                title:"温馨提示:",
+                                content:"保存成功",
+                                type:'green',
+                                button:{
+                                    ok:{
+                                        text:'谢谢',
+                                        btnClass:'btn-green'
+                                    }}
+                            })  
+                            location.href='/question/index'//跳转到该页面，即刷新题库列表表格
+                        }else{
+                            $.confirm({
+                                title:"温馨提示:",
+                                content:"保存失败"+data.message,
+                                type:'red',
+                                button:{
+                                    ok:{
+                                        text:'关闭',
+                                        btnClass:'btn-red'
+                                    }
+                                }
+                            })
+                        }
+                    }
+                })
+
+            }
+
+            }
+    });
+
+
+
+
+
+</script>
+
+    <style>
+      .md-header{
+          margin-left: 0px;
+      }
+    .my-container {
+        float: left;
+        display: inline-block;
+        margin-right:30px;
+    }
+
+    .myLabel-content ,.myText-content,.myBtn-content{
+        float: left;
+        display: inline-block;
+        line-height: 40px;
+        margin-left: 10px;
+    }
+    .myLabel-content,.myText-content input[type='text'],.myBtn-content .btn {
+        height: 38px;
+        font-size: 15px;
+    }
+    .myBtn-content .btn {
+        margin-bottom: 10px;
+        margin-right: 20px;
+    }
+</style>
+
+
+
+
+</body>
+</html>

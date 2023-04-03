@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>后台管理系统模板</title>
+    <link rel="icon" href="favicon.ico" type="image/ico">
+    <meta name="keywords" content="模板">
+    <meta name="description" content="后台管理系统的HTML模板。">
+    <meta name="author" content="SoulCoder">
+    <div th:include="~{views/common/include :: cssStyle }"></div>
+    <!-- 引入bootstrapmarkdown样式-->
+    <link rel="stylesheet" th:href="@{/static/js/plugins/markdown/css/bootstrap-markdown.min.css}">
+    <!--时间选择插件-->
+    <link rel="stylesheet" th:href="@{/static/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css}">
+    <!--日期选择插件-->
+    <link rel="stylesheet" th:href="@{/static/js/bootstrap-datepicker/bootstrap-datepicker3.min.css}">
+</head>
+<body>
+<div class="coder-layout-web">
+    <div class="coder-layout-container">
+        <!--左侧导航-->
+        <div th:include="~{views/common/include :: #asideStyle }"></div>
+        <!--End 左侧导航-->
+        <!--头部信息-->
+        <div th:include="~{views/common/include :: #headerStyle }"></div>
+        <!--End 头部信息-->
+        <!--页面主要内容-->
+        <main class="coder-layout-content">
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-toolbar clearfix">
+                                <!-- 查询搜索框start-->
+                                <div id="toolbar">
+                                    <div class="my-container">
+                                        <label class="myLabel-content">名称：</label>
+                                        <div class="myText-content">
+                                            <!-- name="name" 搜索时，需要把输入的name 传到后台，参数传递-->
+                                            <input id="q_name" name="name" type="text" class="form-control" placeholder="输入试卷名称">
+                                        </div>
+                                    </div>
+
+                                    <div class="myBtn-content">
+                                        <button id="search" type="button" class="btn btn-primary" data-toggle="modal" data-method="search">
+                                            <i class="mdi mdi-account-search"></i>搜索</button>
+                                    </div>
+                                </div>
+                                <!-- 查询搜索框end-->
+                                <!-- 按钮区start-->
+                                <div class="toolbar-btn-action">
+                                    <button  type="button" class="btn btn-primary" data-toggle="modal" data-method="add" >
+                                        <i class="mdi mdi-plus"></i>新增试卷
+                                    </button>
+<!--                                    <button  type="button" class="btn btn-primary" data-toggle="modal" data-method="appendQuestion" >-->
+<!--                                        <i class="mdi mdi-plus"></i>添加题型-->
+<!--                                    </button>-->
+                                    <!--<button  type="button" class="btn btn-primary" data-toggle="modal" data-method="randomQuestion" >-->
+                                        <!--<i class="mdi mdi-plus"></i>随机组卷-->
+                                    <!--</button>-->
+                                </div>
+                                <!-- 按钮区end-->
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="paperTable" ></table>
+                                </div>
+                            </div>
+
+                            <!-- 新增表单start-->
+                            <div class="modal fade" id="paperAddModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title" id="addPapperModalLabel">新增试题:</h4>
+                                        </div>
+                                        <form id="paperAddForm" method="post" >
+                                            <div class="modal-body">
+                                                <!-- 试题名称-->
+                                                <div class="form-group">
+                                                    <label for="a_name" class="control-label">试题名称：</label>
+                                                    <input type="text" class="form-control" name="name" id="a_name">
+                                                </div>
+                                                <!-- 开始时间 用到了时间组件js-datetimepicker-->
+                                                <div class="form-group">
+                                                    <label  class="control-label">试题开始时间：</label>
+                                                    <input class="form-control js-datetimepicker" type="text"
+                                                           id="a_startTime"
+                                                           name="startTime"
+                                                           placeholder="请选择开始测试时间"
+                                                           value=""
+                                                           data-side-by-side="true" data-locale="zh-cn"
+                                                           data-format="YYYY-MM-DD HH:mm:ss" />   <!--  对日期进行格式化 才传到后台-->
+                                                </div>
+                                                <!-- 结束时间 js-datetimepicker-->
+                                                <div class="form-group">
+                                                    <label  class="control-label">试题结束时间：</label>
+                                                    <input class="form-control js-datetimepicker" type="text"
+                                                           id="a_endTime"
+                                                           name="endTime"
+                                                           placeholder="请选择结束测试时间"
+                                                           value=""
+                                                           data-side-by-side="true" data-locale="zh-cn"
+                                                           data-format="YYYY-MM-DD HH:mm:ss" />
+                                                </div>
+                                                <div class="form-group">
+                                                    <label  class="control-label">试卷等级：</label>
+                                                    <select  id="levelid" class="form-control">
+                                                        <option> -请选择- </option>
+                                                        <option th:each="level : ${levels}" th:value="${level.id}">
+                                                            <span th:text="${level.name}"></span>
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                                <button type="button" data-method='save' class="btn btn-primary">保存</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 新增表单结束-->
+
+                            <!-- 修改表单start-->
+                            <div class="modal fade" id="paperEditModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title" >修改试题</h4>
+                                        </div>
+                                        <form id="paperEditForm" method="post">
+                                            <div class="modal-body">
+                                                <!--修改表单 id需要隐藏起来，不必显示 type="hidden"-->
+                                                <!-- name="id"传到后台的参数 name的值 即id作为参数传到后台-->
+                                                <input type="hidden" id="e_id" class="form-control" name="id">
+                                                <div class="form-group">
+                                                    <label class="control-label">试题名称：</label>
+                                                    <input type="text" id="e_name" class="form-control" name="name">
+                                                </div>
+
+                                                <!-- 开始时间-->
+                                                <div class="form-group">
+                                                    <label  class="control-label">试题开始时间：</label>
+                                                    <input class="form-control js-datetimepicker" type="text"
+                                                           id="e_startTime"
+                                                           name="startTime"
+                                                           placeholder="请选择开始时间时间"
+                                                           value=""
+                                                           data-side-by-side="true" data-locale="zh-cn"
+                                                           data-format="YYYY-MM-DD HH:mm:ss" />
+                                                </div>
+                                                <!-- 结束时间-->
+                                                <div class="form-group">
+                                                    <label  class="control-label">试题结束时间：</label>
+                                                    <input class="form-control js-datetimepicker" type="text"
+                                                           id="e_endTime"
+                                                           name="endTime"
+                                                           placeholder="请选择结束时间"
+                                                           value=""
+                                                           data-side-by-side="true" data-locale="zh-cn"
+                                                           data-format="YYYY-MM-DD HH:mm:ss" />
+                                                </div>
+                                                <div class="form-group">
+                                                    <label  class="control-label">试卷等级：</label>
+                                                    <select  id="e_levelid" class="form-control">
+                                                        <option> -请选择- </option>
+                                                        <option th:each="level : ${levels}" th:value="${level.id}">
+                                                            <span th:text="${level.name}"></span>
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                                <button type="button" data-method='editSave' class="btn btn-primary">保存</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 修改表单end-->
+
+
+
+
+                    </div>
+                </div>
+            </div>
+    </div>
+
+    </main>
+
+</div>
+</div>
+
+<div th:include="~{views/common/include :: #jsStyle}"></div>
+<script type="text/javascript"  th:src="@{/static/js/jquery.serialize-object.min.js}"></script>
+<script  th:src="@{/static/js/plugins/markdown/js/markdown.js}"></script>
+<script  th:src="@{/static/js/plugins/markdown/js/to-markdown.js}"></script>
+<script  th:src="@{/static/js/plugins/markdown/js/bootstrap-markdown.js}"></script>
+<script  th:src="@{/static/js/plugins/markdown/js/marked.js}"></script>
+
+<!--时间选择插件-->
+<script th:src="@{/static/js/bootstrap-datetimepicker/moment.min.js}"></script>
+<script th:src="@{/static/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script th:src="@{/static/js/bootstrap-datetimepicker/locale/zh-cn.js}"></script>
+<!--日期选择插件-->
+<script th:src="@{/static/js/bootstrap-datepicker/bootstrap-datepicker.min.js}"></script>
+<script th:src="@{/static/js/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js}"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function(e){
+        $('#paperTable').bootstrapTable({
+            url: '/paper/listpage',                      //请求后台的URL（*）
+            method: 'GET',                      //请求方式（*）
+            //toolbar: '#toolbar',              //工具按钮用哪个容器
+            striped: true,                      //是否显示行间隔色
+            cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+            pagination: true,                   //是否显示分页（*）
+            sortable: true,                     //是否启用排序
+            sortOrder: "asc",                   //排序方式
+            sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+            pageNumber: 1,                      //初始化加载第一页，默认第一页,并记录
+            pageSize: 10,                     //每页的记录行数（*）
+            pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+            iconsPrefix: 'mdi', // 自定义表格右上角的图标，这个必须要定义，因为不是官方模板，icon图标样式名字不同会导致图标无法显示
+            icons:  {
+                refresh: 'mdi-refresh',              // 刷新图标
+                columns: 'mdi-format-list-bulleted', // 列图标
+                toggleOff: 'mdi-toggle-switch-off',  // 切换光
+                toggleOn: 'mdi-toggle-switch',       // 切换开
+                detailOpen: 'mdi-plus',              // 详情开
+                detailClose: 'mdi-minus',            // 详情光
+                fullscreen: 'mdi-fullscreen'         // 全屏图标
+            },
+            search: false,                      //是否显示表格搜索
+            strictSearch: true,
+            showColumns: true,                  //是否显示所有的列（选择显示的列）
+            showRefresh: true,                  //是否显示刷新按钮
+            minimumCountColumns: 2,             //最少允许的列数
+            clickToSelect: true,                //是否启用点击选中行
+            //height: 500,                      //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+            uniqueId: "id",                     //每一行的唯一标识，一般为主键列
+            showToggle: true,                   //是否显示详细视图和列表视图的切换按钮
+            cardView: false,                    //是否显示详细视图
+            detailView: false,                  //是否显示父子表
+            singleSelect: false, //开启单选,想要获取被选中的行数据必须要有该参数
+            queryParams : function(params) {//上传服务器的参数
+                var temp = {
+                    //传到后台的三个参数
+                    offset :params.offset + 0,// SQL语句起始索引
+                    page : params.limit,  // 每页显示数量
+                    name: $("#q_name").val() // 获取到搜索时输入的name值，传到后台
+                };
+                return temp;//返回后台查询到的数据 offset  （row）page name  然后按照以下表格的列columns进行展示。试卷编号试卷名称试卷等级等等，，，
+            },
+            columns: [
+                {
+                    align : 'center',
+                    checkbox: true
+                },{
+                    field: 'id',
+                    title: '试卷编号'
+                }, {
+                    field: 'name',
+                    title: '试卷名称'
+                },{
+                    field: 'levelname',
+                    title: '试卷等级'
+                }, {
+                    field: 'startTime',
+                    title: '开始时间'
+                }, {
+                    field: 'endTime',
+                    title: '结束时间'
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间'
+                },
+                {
+                    field: 'status',
+                    title: '试卷状态',
+                    formatter:statusFormatter
+                },
+                {
+                    field: 'doOpt',
+                    title: '操作',
+                    formatter : optFormatter  //调用optFormatter方法进行格式化
+                }]
+        });
+        //状态格式化
+        function statusFormatter(value,row, index){ //0已创建 1停用
+            if(row.status==0){
+                return "已创建"
+            }else if(row.status == 1){
+                return "<span style='color:red'>已停用</span>"
+            }
+        }   
+        //操作格式化  点击调用方法onclick=\'edit("' + row.id + '") onclick="del(\''+row.id+'\')"把id传到后台，根据选中的id进行删除
+        function optFormatter(value,row, index){
+            var c = '<a class="btn btn-xs btn-default" href="#!"  onclick=\'edit("' + row.id + '")\' title="编辑" data-toggle="tooltip"><i class="mdi mdi-pencil"></i></a>';
+            var e = '<div class="btn btn-xs btn-default"  href="#!" onclick="del(\''+row.id+'\')" title="删除"  data-toggle="tooltip"><i class="mdi mdi-window-close"></i><div/> ';
+            return c + e ;
+        }
+
+        //绑定事件
+        $("button,a").on('click',function(){
+            //获取到 a标签里面配置 data-method
+            var methodName = $(this).data('method');
+            if(methodName){
+                doMethod[methodName]();
+            }
+        });
+
+        var doMethod = {
+            appendQuestion:function(){
+              //弹出选题页面
+                window.location.href='/paper/appendQuestion'
+            },
+
+            search:function(){
+
+                var name = $("#q_name").val();
+                var queryparam = {
+                    silent:true,
+                    query:{
+                        name:name
+                    }
+                };
+                $('#paperTable').bootstrapTable('refresh',queryparam);
+
+            },
+            add:function(){
+                //弹出 展示 对话框 新增试卷
+                $("#paperAddModal").modal({show:true})
+            },
+            //试卷新增的保存功能
+            save(){
+                //（1）获取表单（paperAddForm）里面参数, 
+                var sendObj={//发送到后台的对象 sendObj（封装了多个/三个参数）
+                    "name":$("#a_name").val(),//json格式{key:value,key:value...}，键值对的形式
+                    "startTime":$("#a_startTime").val(),
+                    "endTime":$("#a_endTime").val(),
+                    "levelid":$("#levelid").val()
+                }
+                $.ajax({//（2）发送data数据（sendObj）到后台
+                    type:'POST',
+                    url:'/paper/savePaper',//后台接收数据的路径
+                    data:sendObj,
+                    success:function(data){
+                        if(data.isSuccess){//（3）判断返回数据成功或者失败
+                            $.confirm({
+                                title:'温馨提示',
+                                content:'保存成功',
+                                type:'green',
+                                buttons:{
+                                    ok:{
+                                        text:'谢谢',
+                                        btnClass:'btn-green'
+                                    }
+                                }
+                            })
+                            $("#paperAddModal").modal('hide')//关闭
+                            $("#paperTable").bootstrapTable('refresh')//刷新paperTable试卷表格
+                        }else{
+                            $.confirm({//失败
+                                title:'温馨提示',
+                                content:'操作失败'+data.message,
+                                type:'red',
+                                buttons:{
+                                    ok:{
+                                        text:'谢谢',
+                                        btnClass:'btn-red'
+                                    }
+                                }
+                            })
+                        }
+                    }
+                })
+
+            },
+            //修改的保存操作（类似上面的 试卷新增的保存 save（），复制下来改一下）
+            //唯一不同的是，在修改的保存中，是根据id 进行修改的 所以要加多一个参数id,一起传到后台，进行数据库表的更新
+            editSave:function(){
+                //(1.)获取表单里面参数
+                var sendObj={
+                    "id":$("#e_id").val(),//所以要加多一个参数id
+                    "name":$("#e_name").val(),
+                    "startTime":$("#e_startTime").val(),
+                    "endTime":$("#e_endTime").val(),
+                    "levelid":$("#e_levelid").val()
+                }
+                $.ajax({//（2）发送data到后台
+                    type:'POST',
+                    url:'/paper/editSavePaper',
+                    data:sendObj,
+                    success:function(data){
+                        if(data.isSuccess){//（3）判断返回数据成功或者失败
+                            $.confirm({
+                                title:'温馨提示',
+                                content:'保存成功',
+                                type:'green',
+                                buttons:{
+                                    ok:{
+                                        text:'谢谢',
+                                        btnClass:'btn-green'
+                                    }
+                                }
+                            })
+                            $("#paperEditModal").modal('hide')
+                            $("#paperTable").bootstrapTable('refresh')
+                        }else{
+                            $.confirm({
+                                title:'温馨提示',
+                                content:'操作失败'+data.message,
+                                type:'red',
+                                buttons:{
+                                    ok:{
+                                        text:'谢谢',
+                                        btnClass:'btn-red'
+                                    }
+                                }
+                            })
+                        }
+                    }
+                })
+
+            }
+
+            }
+    });
+    //////////////////////////////////////////////////////修改操作////////////////////////////////////
+
+    function edit(id){
+        //1.弹出 显示修改的对话框
+        $("#paperEditModal").modal({show:true})
+        //2.数据的回显 通过唯一的id 即 getRowByUniqueId
+        var editRow = $("#paperTable").bootstrapTable('getRowByUniqueId',id)
+        $("#e_id").val(editRow.id)
+        $("#e_name").val(editRow.name)
+        $("#e_startTime").val(editRow.startTime)
+        $("#e_endTime").val(editRow.endTime)
+        $("#e_levelid").val(editRow.levelid)
+
+    }
+    //////////////////////////////////////////////////////删除操作////////////////////////////////////
+     //跟用户列表中 根据用户id删除用户一样，拷过来改一下
+    //前台代码  根据传过来的试卷id 删除试卷
+    function del(id){
+        //（1）删除之前先提示一下，是否真的要删除
+        $.confirm({
+            title:'温馨提示',
+            content:'亲 你真的要删除我吗?',
+            type:'green',
+            buttons:{
+                ok:{
+                    text:'确定',
+                    btnClass:'btn-green',
+                    action:function(){
+                        //根据id 删除数据
+                        $.post("/paper/deletePaper",{"id":id},function(data){//post方式
+                            if(data.isSuccess){
+                                $.confirm({
+                                    title:'温馨提示',
+                                    content:'删除成功',
+                                    type:'green',
+                                    buttons:{
+                                        omg:{
+                                            text:'谢谢',
+                                            btnClass:'btn-green'
+                                        }
+                                    }
+                                })
+                                //刷新数据
+                                $("#paperTable").bootstrapTable('refresh');
+                            }else{
+                                $.confirm({
+                                    title:'温馨提示',
+                                    content:'删除失败',
+                                    type:'red',
+                                    buttons:{
+                                        omg:{
+                                            text:'关闭',
+                                            btnClass:'btn-red'
+                                        }
+                                    }
+                                })
+                            }
+                        })
+
+                    }
+                },
+                cancel:{
+                    text:'取消',
+                    btnClass:'btn-red'
+                }
+            }
+        })
+
+
+
+    }
+
+
+
+</script>
+
+    <style>
+      .md-header{
+          margin-left: 0px;
+      }
+    .my-container {
+        float: left;
+        display: inline-block;
+        margin-right:30px;
+    }
+
+    .myLabel-content ,.myText-content,.myBtn-content{
+        float: left;
+        display: inline-block;
+        line-height: 40px;
+        margin-left: 10px;
+    }
+    .myLabel-content,.myText-content input[type='text'],.myBtn-content .btn {
+        height: 38px;
+        font-size: 15px;
+    }
+    .myBtn-content .btn {
+        margin-bottom: 10px;
+        margin-right: 20px;
+    }
+</style>
+
+
+
+
+</body>
+</html>

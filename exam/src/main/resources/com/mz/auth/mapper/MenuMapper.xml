@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.mz.auth.mapper.MenuMapper">
+    <resultMap id="menuMap" type="Menu">
+         <id property="id" column="id"></id>
+         <result property="name" column="name"></result>
+         <result property="icon" column="icon"></result>
+         <result property="url" column="url"></result>
+         <collection property="childs" javaType="Menu">
+             <id property="id" column="sid"></id>
+             <result property="name" column="sname"></result>
+             <result property="icon" column="sicon"></result>
+             <result property="url" column="surl"></result>
+         </collection>
+    </resultMap>
+    <select id="listMenusByUserid" parameterType="java.lang.Long" resultMap="menuMap">
+            SELECT
+                parent.id,
+                parent. NAME,
+                parent.icon,
+                parent.url,
+                sub.id sid,
+                sub. NAME sname,
+                sub.icon sicon,
+                sub.url surl
+            FROM
+                (
+                    SELECT
+                        m.*
+                    FROM
+                        t_menu m
+                    JOIN t_permission p ON m.id = p.menuid
+                    JOIN t_role_permission rp ON p.id = rp.permissionid
+                    JOIN t_role r ON r.id = rp.roleid
+                    JOIN t_user_role ur ON r.id = ur.roleid
+                    WHERE
+                        ur.userid = #{userid}
+                ) sub
+            JOIN t_menu parent ON sub.pid = parent.id
+    </select>
+</mapper>

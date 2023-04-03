@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>后台管理系统模板</title>
+    <link rel="icon" href="favicon.ico" type="image/ico">
+    <meta name="keywords" content="模板">
+    <meta name="description" content="后台管理系统的HTML模板。">
+    <meta name="author" content="SoulCoder">
+    <div th:include="~{views/common/include :: cssStyle }"></div>
+    <!-- 引入bootstrapmarkdown样式-->
+    <link rel="stylesheet" th:href="@{/static/js/plugins/markdown/css/bootstrap-markdown.min.css}">
+
+    <!-- 引入ztree样式-->
+    <link rel="stylesheet" th:href="@{/static/js/plugins/ztree/css/bootstrapStyle/bootstrapStyle.css}" type="text/css">
+</head>
+<body>
+<div class="coder-layout-web">
+    <div class="coder-layout-container">
+        <!--左侧导航-->
+        <div th:include="~{views/common/include :: #asideStyle }"></div>
+        <!--End 左侧导航-->
+        <!--头部信息-->
+        <div th:include="~{views/common/include :: #headerStyle }"></div>
+        <!--End 头部信息-->
+        <!--页面主要内容-->
+        <main class="coder-layout-content">
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <ul id="paperTree" class="ztree"></ul>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="card">
+                            <div class="card-toolbar clearfix">
+                                <!-- 查询搜索框start-->
+                                <div id="toolbar">
+                                    <div class="my-container">
+                                        <label class="myLabel-content">题目名称：</label>
+                                        <div class="myText-content">
+                                            <input id="q_name" name="name" type="text" class="form-control" placeholder="输入题目名称">
+                                        </div>
+                                    </div>
+
+                                    <div class="myBtn-content">
+                                        <button id="search" type="button" class="btn btn-primary" data-toggle="modal" data-method="search">
+                                            <i class="mdi mdi-account-search"></i>搜索</button>
+
+                                        <button id="diyPaperQuestion" type="button" class="btn btn-primary" data-toggle="modal" data-method="diyPaperQuestion">
+                                            <i class="mdi mdi-account-search"></i>手动组卷</button>
+                                        <button id="randomPaperQuestion" type="button" class="btn btn-primary" data-toggle="modal" data-method="randomPaperQuestion">
+                                            <i class="mdi mdi-account-search"></i>随机组卷</button>
+
+                                        <button id="previewPaper" type="button" class="btn btn-primary" data-toggle="modal" data-method="previewPaper">
+                                            <i class="mdi mdi-account-search"></i>预览试卷</button>
+                                    </div>
+                                </div>
+                                <!-- 查询搜索框end-->
+
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="questionTable" ></table>
+                                </div>
+                            </div>
+
+                            <!-- 随机组卷表单start-->
+                            <div class="modal fade" id="randomZJModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title" >随机组卷选项</h4>
+                                        </div>
+                                        <form id="sjZjForm" method="post" enctype="multipart/form-data">
+                                            <div class="modal-body">
+                                                <input type="hidden" id="sj_paperid" class="form-control" name="paperId">
+                                                <div class="form-group">
+                                                    <label class="control-label">随机生成的选择题数量：(题库共<span id="xztTotalId"></span>道)</label>
+                                                    <!--根据id="sj_xzt"获取输入的值 name="xzeNum 要传到后台-->
+                                                    <input type="text" id="sj_xzt" class="form-control" placeholder="不能超过题库存在数" name="xzeNum">
+                                                </div>
+                                                <div class="form-group">
+                                                    <!--根据id="sj_tkt"获取输入的值 name="tktNum 要传到后台-->
+                                                    <label class="control-label">随机生成的填空题数量：(题库共<span id="tktTotalId"></span>道)</label>
+                                                    <input type="text" id="sj_tkt" class="form-control" placeholder="不能超过题库存在数"  name="tktNum">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label">随机生成的判断题数量：(题库共<span id="pdtTotalId"></span>道)</label>
+                                                    <input type="text" id="sj_pdt" class="form-control" placeholder="不能超过题库存在数"  name="pdtNum">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label">随机生成的简单题(问答题)数量：(题库共<span id="jdtTotalId"></span>道)</label>
+                                                    <input type="text" id="sj_jdt" class="form-control" name="wdtNum" placeholder="不能超过题库存在数">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                                <button type="button" data-method='sjZJSave' class="btn btn-primary">保存</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 随机组卷表单end-->
+
+                    </div>
+                </div>
+            </div>
+    </div>
+
+    </main>
+
+</div>
+</div>
+
+<div th:include="~{views/common/include :: #jsStyle}"></div>
+<script type="text/javascript"  th:src="@{/static/js/jquery.serialize-object.min.js}"></script>
+
+<!-- 引入ztree树形组件-->
+<script th:src="@{/static/js/plugins/ztree/js/jquery.ztree.core.js}"></script>
+<script th:src="@{/static/js/plugins/ztree/js/jquery.ztree.excheck.js}"></script>
+<script th:src="@{/static/js/plugins/ztree/js/jquery.ztree.exedit.js}"></script>
+
+<script type="text/javascript">
+//####################### 公共变量部分##########################################
+/**
+ *  param:     nodeId 节点id
+ * description: 其实就是试卷的id值 在组卷的时候，看它是否有值，
+ *        如果有值，说明已经选中的试题可以开始组卷
+ */
+var nodeId ;
+//点击左侧的 回显的问题id
+var questionIdArr = [];
+
+//##################################################表格操作######################
+    $(document).ready(function(e){
+        $('#questionTable').bootstrapTable({
+            url: '/question/listpage',                      //请求后台的URL（*）
+            method: 'GET',                      //请求方式（*）
+            //toolbar: '#toolbar',              //工具按钮用哪个容器
+            striped: true,                      //是否显示行间隔色
+            cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+            pagination: true,                   //是否显示分页（*）
+            sortable: true,                     //是否启用排序
+            sortOrder: "asc",                   //排序方式
+            sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+            pageNumber: 1,                      //初始化加载第一页，默认第一页,并记录
+            pageSize: 10,                     //每页的记录行数（*）
+            pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+            iconsPrefix: 'mdi', // 自定义表格右上角的图标，这个必须要定义，因为不是官方模板，icon图标样式名字不同会导致图标无法显示
+            icons:  {
+                refresh: 'mdi-refresh',              // 刷新图标
+                columns: 'mdi-format-list-bulleted', // 列图标
+                toggleOff: 'mdi-toggle-switch-off',  // 切换光
+                toggleOn: 'mdi-toggle-switch',       // 切换开
+                detailOpen: 'mdi-plus',              // 详情开
+                detailClose: 'mdi-minus',            // 详情光
+                fullscreen: 'mdi-fullscreen'         // 全屏图标
+            },
+            search: false,                      //是否显示表格搜索
+            strictSearch: true,
+            showColumns: true,                  //是否显示所有的列（选择显示的列）
+            showRefresh: true,                  //是否显示刷新按钮
+            minimumCountColumns: 2,             //最少允许的列数
+            clickToSelect: true,                //是否启用点击选中行
+            //height: 500,                      //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+            uniqueId: "id",                     //每一行的唯一标识，一般为主键列
+            showToggle: true,                   //是否显示详细视图和列表视图的切换按钮
+            cardView: false,                    //是否显示详细视图
+            detailView: false,                  //是否显示父子表
+            singleSelect: false, //开启单选,想要获取被选中的行数据必须要有该参数
+            //responseHandler:responseHandler,
+            queryParams : function(params) {//上传服务器的参数
+                var temp = {
+                    offset :params.offset + 0,// SQL语句起始索引
+                    page : params.limit  // 每页显示数量
+                };
+                return temp;
+            },
+            columns: [
+                { //前台列表 第一列 口 和问题标号id挂钩起来则 打个√
+                    align : 'center',
+                    checkbox: true,
+                    field: 'checkCol',
+                    //格式化
+                    formatter:function(value,row,index){
+                        for(var i=0;i<questionIdArr.length;i++){
+                            //if($.inArray(row.id,questionIdArr)!=-1){
+                            if(questionIdArr[i]["questionId"] == row.id){//PaperQuestion  试卷的问题表对象的属性  questionId 等于row.id
+                                return {
+                                    checked:true
+                                }
+                            }
+                        }
+                    }
+
+                },{
+                    field: 'id',
+                    title: '问题编号'
+                }, {
+                    field: 'questionTitle',
+                    title: '问题标题'
+                }, {
+                    field: 'questionAnswer',
+                    title: '问题答案',
+                    formatter : answerFormatter
+                }, {
+                    field: 'q_typeid',
+                    title: '问题类型',
+                    formatter:questionTypeFormatter
+                },
+                {
+                    field: 'status',
+                    title: '问题状态',
+                    formatter:questionStatusFormatter
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间'
+                },
+                {
+                    field: 'creatorId',
+                    title: '创建者'
+                }]
+        });
+
+        $('#questionTable').on('uncheck.bs.table check.bs.table check-all.bs.table uncheck-all.bs.table',function (e,rows) {
+            var datas=$.isArray(rows)?rows:[rows];
+            examine(e.type,datas);
+        });
+        //questionIdArr=[{questionId:1},{}]
+        function examine(type, datas) {
+            if (type.indexOf('uncheck') == -1) {
+                $.each(datas, function (i, v) {
+
+                    questionIdArr.indexOf(v.id)==-1?questionIdArr.push({questionId:v.id}):-1;
+                });
+            } else {
+                $.each(datas, function (i, v) {
+                    questionIdArr.splice(questionIdArr.indexOf({questionId:v.id}),1);
+                })
+            }
+        }
+
+        // function responseHandler(res) {
+        //     //console.log(res)
+        //     console.log(questionIdArr)
+        //     $.each(res.rows, function (i, row) {
+        //
+        //         for(var i=0;i<questionIdArr.length;i++){
+        //             if(questionIdArr[i]["questionId"] == row.id){//PaperQuestion  试卷的问题表对象的属性  questionId 等于row.id
+        //                   row.checkCol = true
+        //             }
+        //         }
+        //     });
+        //     return res
+        //
+        // }
+
+        //问题类型格式化
+        function questionTypeFormatter(value,row,index){
+            if(row.q_typeid==1){
+                return "<span >选择题</span>"
+            }else if(row.q_typeid == 2){
+                return "<span >填空题</span>"
+            }else if(row.q_typeid == 3){
+                return "<span >判断题</span>"
+            }else if(row.q_typeid == 4){
+                return "<span >简答题</span>"
+            }else if(row.q_typeid == 5){
+                return "<span >附加题</span>"
+            }
+        }
+        function questionStatusFormatter(value,row, index){
+            if(row.status==0){
+                return "<span >正常</span>"
+            }else if(row.status == 1){
+                return "<span style='color:red'>停用</span>"
+            }
+        }
+
+        function answerFormatter(value,row, index){
+            if(row.questionAnswer==0){
+                return "<span class='mdi mdi-close' style='color:red'></span>"
+            }else if(row.questionAnswer == 1){
+                return "<span class='mdi mdi-check' style='color:red'></span>"
+            }else{
+                if(row.questionAnswer==null){
+                    return "<span style='color:red'>您看着打分就是</span>"
+                }
+                return "<span style='color:red'>"+row.questionAnswer+"</span>"
+            }
+        }
+        function optFormatter(value,row, index){
+            var c = '<a class="btn btn-xs btn-default" href="#!"  onclick=\'edit("' + row.id + '")\' title="编辑" data-toggle="tooltip"><i class="mdi mdi-pencil"></i></a>';
+            var e = '<div class="btn btn-xs btn-default"  href="#!" onclick="del(\''+row.id+'\')" title="删除"  data-toggle="tooltip"><i class="mdi mdi-window-close"></i><div/> ';
+            return c + e ;
+        }
+        //绑定事件
+        $("button,a").on('click',function(){
+            //获取到 a标签里面配置 data-method
+            var methodName = $(this).data('method');
+            if(methodName){
+                doMethod[methodName]();
+            }
+        });
+        var doMethod = {
+            search:function(){
+                var name = $("#q_name").val();
+                var queryparam = {
+                    silent:true,
+                    query:{
+                        name:name
+                    }
+                };
+                $('#questionTable').bootstrapTable('refresh',queryparam);
+            },
+            randomPaperQuestion(){
+                //（1）随机组卷 判断一下用户是否已经选择的试卷 如果选择，提示用户选择左侧试卷
+                if(!nodeId){
+                    //表示没有选中左侧试卷树
+                    $.confirm({
+                        title:'温馨提示',
+                        content:'亲,请选中左侧试卷树进行组卷操作',
+                        type:'green',
+                        buttons:{
+                            ok:{
+                                text:"谢谢",
+                                btnClass:'btn-green'
+                            }
+                        }
+                    })
+                    return
+                }
+                //（2）真正要做的事情，到后台查询对应类型的题型数量 有多少条（如选择题一共有5条） 作为一个参数填写
+                $.ajax({
+                    url:'/paper/queryTypeTotal',
+                    type:'POST',
+                    contentType:'application/json;charset=utf-8',//json格式传过去，传到后台
+                    //返回json格式的数据，前台进行展示
+                    success:function(data){
+                       // 返回结果的形式：  [{q_typeid:1,totalNum:10,q_typeid:2,totalNum:20}。。。]
+                        $("#sj_paperid").val(nodeId)//上面隐藏域的id 要传到后台
+                        for(var i=0;i<data.length;i++){//i=1 2 3 4
+                            let typeTotalVo = data[i]  //如data[1]即选择题{q_typeid:1,totalNum:10}
+                            switch(typeTotalVo.q_typeid){
+                                case 1:$("#xztTotalId").html(typeTotalVo.totalNum); break;
+                                case 2:$("#tktTotalId").html(typeTotalVo.totalNum); break;
+                                case 3:$("#pdtTotalId").html(typeTotalVo.totalNum); break;
+                                case 4:$("#jdtTotalId").html(typeTotalVo.totalNum); break;
+                            }
+                        }
+                        //弹出对话框
+                        $("#randomZJModal").modal({show:true})
+                    }
+                })
+
+            },
+            //随机组卷保存
+            sjZJSave(){
+                //获取表单里面的参数 (把参数封装到sendObj对象里面) 把数字传到后台，根据数字随机生成试卷  上面的name=paperid,xztNum等等要传到后台
+                var sendObj={
+                    "paperId":$("#sj_paperid").val(), //参数paperId传到后台，
+                    "xztNum":$("#sj_xzt").val(),//参数xztNum传到后台 数字默认是string类型，后台需要转long类型
+                    "tktNum":$("#sj_tkt").val(),//参数tktNum传到后台 数字默认是string类型，后台需要转long类型
+                    "pdtNum":$("#sj_pdt").val(),//参数pdtNum传到后台 数字默认是string类型，后台需要转long类型
+                    "jdtNum":$("#sj_jdt").val()//参数jdtNum传到后台 数字默认是string类型，后台需要转long类型
+                }
+                $.ajax({
+                    url:"/paper/randomPaperQuestion",
+                    type:"POST",
+                    dataType:"json",
+                    data:JSON.stringify(sendObj),
+                    contentType:"application/json;charset=utf-8",
+                    success:function(data){//后台返回的数据
+                        if(data.isSuccess){
+                            $.confirm({
+                                title:'温馨提示',
+                                content:'组卷成功',
+                                type:'green',
+                                buttons:{
+                                    ok:{
+                                        text:"谢谢",
+                                        btnClass:'btn-green',
+                                        action:function(){
+                                            $("#randomZJModal").modal('hide')//隐藏对话框
+                                            location.href='/paper/appendQuestion'//跳转到随机组卷页面
+                                        }
+                                    }
+                                }
+                            })
+                        }else{
+                            $.confirm({
+                                title:'温馨提示',
+                                content:'组卷失败'+data.message,
+                                type:'red',
+                                buttons:{
+                                    ok:{
+                                        text:"谢谢",
+                                        btnClass:'btn-red'
+                                    }
+                                }
+                            })
+                        }
+                    }
+                })
+
+            },
+            //手动组卷
+            diyPaperQuestion(){
+                //(判断1)表示没有选中左侧试卷树
+                if(!nodeId){//即paperid
+                    $.confirm({
+                        title:'温馨提示',
+                        content:'亲,请选中左侧试卷树名称',
+                        type:'green',
+                        buttons:{
+                            ok:{
+                                text:"谢谢",
+                                btnClass:'btn-green'
+                            }
+                        }
+                    })
+                    return
+                }
+                //（判断2）获取表格里面选中的行数据  getAllSelections即获取所有选中的行
+                var rows =  $("#questionTable").bootstrapTable('getAllSelections')
+                if(rows.length == 0){
+                    $.confirm({
+                        title:'温馨提示',
+                        content:'亲,请选中右侧的试题再进行组卷操作',
+                        type:'green',
+                        buttons:{
+                            ok:{
+                                text:"谢谢",
+                                btnClass:'btn-green'
+                            }
+                        }
+                    })
+                    return
+                }
+
+                //（3）把参数传递到后台 完成组卷
+                //（3.1）获取选中的 多条问题的id 封装到 questionIdsList数组 [{id:111},{id:112}] 作为参数
+                //questionIdArr
+
+                var questionIdsList = questionIdArr.map(item=>{//取出每一项
+                    return {id:item.questionId}//返回问题的id，
+                })
+                //（3.2）传到后台的对象sendObj（封装了参数），一张试卷对应多条问题，即paperId对应多个 questionId
+                //[{paperId:10015,questionIdsList:[{id:111},{id:112}]}]
+                var sendObj = {
+                    paperId:nodeId,  //试卷id参数
+                    questionIdsList:questionIdsList//选中的 多条问题id 的数组questionIdsList 作为参数
+                }
+                //3.3 发送ajax请求
+                $.ajax({
+                    url:"/paper/diyPaperQuestion",
+                    type:"POST",
+                    dataType:"json",
+                    data:JSON.stringify(sendObj),//sendObj对象
+                    contentType:"application/json;charset=utf-8",
+                    success:function(data){
+                        if(data.isSuccess){
+                            $.confirm({
+                                title:'温馨提示',
+                                content:'保存成功',
+                                type:'green',
+                                buttons:{
+                                    ok:{
+                                        text:"谢谢",
+                                        btnClass:'btn-green',
+                                        action:function(){//跳转试卷组题页面，即刷新该页面
+                                            location.href="/paper/appendQuestion";
+                                        }
+                                    }
+                                }
+                            })
+                        }else{
+                            $.confirm({
+                                title:'温馨提示',
+                                content:'保存失败'+data.message,
+                                type:'red',
+                                buttons:{
+                                    ok:{
+                                        text:"关闭",
+                                        btnClass:'btn-red'
+                                    }
+                                }
+                            })
+                        }
+                    }
+                })
+
+
+
+            },
+            previewPaper(){
+                //预览试卷方法
+                //（1）先判断有没有选中
+                if(!nodeId){
+                    //表示没有选中左侧试卷树
+                    $.confirm({
+                        title:'温馨提示',
+                        content:'亲,请选中左侧试卷树进行预览操作',
+                        type:'green',
+                        buttons:{
+                            ok:{
+                                text:"谢谢",
+                                btnClass:'btn-green'
+                            }
+                        }
+                    })
+                    return
+                }
+                //根据试卷id 查询预览的试卷信息 再跳转到预览页面 完成预览，需要传一个 试卷id参数 到后台
+                location.href='/paper/previewPaper/'+nodeId
+
+
+            }
+
+        }
+    });
+
+</script>
+
+<script type="text/javascript">
+ //#########################加载 左侧树形 start################################
+   //树加载 左侧树形:  形参数的就基本设置
+    var setting = {
+        view: {
+            //不能选择多个试卷
+            selectedMulti: false
+        },
+        check: {
+            //不要多选择框
+            enable: false
+        },
+        data: {
+            //简单格式数据
+            simpleData: {
+                enable: true
+            }
+        },
+        //点击左侧 树（试卷）时，调用zTreeOnClick方法（即左侧树的点击事件）
+        callback:{
+            onClick: zTreeOnClick
+        }
+    };
+    //展示试卷树的树形结构 (根据查询到的数据） 
+    var zNodes =[
+        {id:999999, pId:0, name:"测试试卷名称", open:true},
+        // {id:101, ,name:"java试题1"，pId:999999} 即查出来的试卷都是挂到 测试试卷名称（根据pId:999999）下面
+        // （相当于测试试卷名称的子集，即把试卷追加（存储）到 zNodes 变量里面 ）
+    ];
+    //（1）加载查询 左侧试卷树 的数据（向后台查询数据）    然后按照 上面：setting  zNodes 的要求展示试卷树
+    $(document).ready(function(){
+        //后台查询数据 ajax默认是异步操作 需要把异步变成同步  async:false,
+        // （异步就是查询的试卷还没查完，试卷树就展示出来了，所以需要变成同步，先把试卷全部查出来再进行展示试卷树）
+        //（1.1）调用 loadTreeData方法 查询 树（试卷）的数据
+        loadTreeData();
+        //（1.2）初始化一个树   即 根据 查询出的 树（试卷）的数据 ，进行树的初始化zTree.init
+        //id=paperTree   参数：setting  zNodes
+        $.fn.zTree.init($("#paperTree"), setting, zNodes);
+    });
+    //（2）loadTreeData方法发送ajax请求
+    function loadTreeData(){//
+        //发送ajax查询试卷的数据
+        $.ajax({
+            url:"/paper/queryPaper",   //请求路径  查询所有试卷 
+            type:"POST",
+            async:false,// ajax默认是异步操作 需要把异步变成同步
+            //2.1根据返回的data数据 进行相应操作
+            success:function(data){
+                //[{id:111,name:'试卷一',pId:999999},{id:1110,name:'试卷2',pId:999999},{.。。。。。。}]
+                if(data && data.length>0){//查询出数据有并且不为空
+                   var result =  data.map(item=>{//map()方法里面有查询出来的 试卷，item=>即取出每一张试卷
+                        return {
+                            id:item.id,
+                            name:item.name,
+                            pId:999999
+                        }
+                    })
+                    //2.3 把遍历出来的 试卷result 展示在试卷树（ zNodes）下 (根据查询到的数据） 
+                    zNodes = zNodes.concat(result)
+                }
+            }
+        })
+        }
+
+     //左侧树的点击事件（event树本身事件, treeId树的id, treeNode树的节点）
+     function zTreeOnClick(event, treeId, treeNode) {
+            //获取点击试卷树id  nodeId为公共的变量 到时候 随机组卷 要用到
+            nodeId = treeNode.id;//treeNode.id即paperId
+            //根据paperId 即nodeId 查询对应的questionId
+            questionIdArr = [];  //把后台 查询到的问题 存进数组，默认值为空
+            loadPaperQuestion(nodeId)
+     };
+     //加载试卷对应的问题（）
+     function loadPaperQuestion(paperId){//调用该方法 paperId= nodeId
+         $.ajax({
+             url:"/paper/queryQuestionByPaperId",  //路径
+             type:"POST",
+             data:JSON.stringify({"paperId":paperId}),//前台传paperId参数到后台 json格式
+             contentType:"application/json;charset=utf-8",
+             async:false,
+             success:function(data){
+                if(data && data.length>0){
+                    questionIdArr = data;
+                }
+                 $("#questionTable").bootstrapTable('refresh')//刷新，清空一下没有的数据
+             }
+         })
+     }
+//########################################加载树形结束############################
+</script>
+
+    <style>
+      .md-header{
+          margin-left: 0px;
+      }
+    .my-container {
+        float: left;
+        display: inline-block;
+        margin-right:30px;
+    }
+
+    .myLabel-content ,.myText-content,.myBtn-content{
+        float: left;
+        display: inline-block;
+        line-height: 40px;
+        margin-left: 10px;
+    }
+    .myLabel-content,.myText-content input[type='text'],.myBtn-content .btn {
+        height: 38px;
+        font-size: 15px;
+    }
+    .myBtn-content .btn {
+        margin-bottom: 10px;
+        margin-right: 20px;
+    }
+</style>
+
+
+
+
+</body>
+</html>

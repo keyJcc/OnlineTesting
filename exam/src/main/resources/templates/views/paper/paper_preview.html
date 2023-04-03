@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>后台管理系统模板</title>
+    <link rel="icon" href="favicon.ico" type="image/ico">
+    <meta name="keywords" content="模板">
+    <meta name="description" content="后台管理系统的HTML模板。">
+    <meta name="author" content="SoulCoder">
+    <div th:include="~{views/common/include :: cssStyle }"></div>
+    <!-- 引入bootstrapmarkdown样式-->
+    <link rel="stylesheet" th:href="@{/static/js/plugins/markdown/css/bootstrap-markdown.min.css}">
+
+    <!-- 引入ztree样式-->
+    <link rel="stylesheet" th:href="@{/static/js/plugins/ztree/css/bootstrapStyle/bootstrapStyle.css}" type="text/css">
+</head>
+<body>
+<div class="coder-layout-web">
+    <div class="coder-layout-container">
+        <!--左侧导航-->
+        <div th:include="~{views/common/include :: #asideStyle }"></div>
+        <!--End 左侧导航-->
+        <!--头部信息-->
+        <div th:include="~{views/common/include :: #headerStyle }"></div>
+        <!--End 头部信息-->
+        <!--页面主要内容-->
+        <main class="coder-layout-content">
+
+            <div class="container-fluid" >
+                <div class="row">
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-8 card" >
+                        <div >
+                            <div class="card-header" style="text-align: center">
+                                <!--thymleft的写法，th:text即取值，需要取出 后台查询数据库查询到的每一项（列）的数据
+                                  后台 model.addAttribute("paperGengerateVO",paperGengerateVO);键值对
+                                  paperGengerateVO.name即sql语句查询出来数据的 列 name值-->
+                                <h2><span th:text="${paperGengerateVO.name}"></span></h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                </div>
+                <!--th:each循环遍历取出每一条问题paperGengerateVO.questions，然后存储在两个变量里面paperVo问题类型，例如选择题,paperVoStat问题的状态-->
+                <div th:each="paperVo,paperVoStat : ${paperGengerateVO.questions} ">
+                       
+                    <!-- 选择题start-->
+                    <!--th:if进行判断 "${paperVo.q_typeid} eq '1'" 1为选择题，2为填空题 。。。。。-->
+                   <div class="row" th:if="${paperVo.q_typeid} eq '1'"  >
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-8 card" >
+                        <div >
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label class="col-xs-12">
+                                        <span th:text="${paperVoStat.count}"></span><!--题号，如第1，2，35678题-->
+                                        <span th:text="${paperVo.questionTitle}"></span>
+                                       ( <span th:text="${paperVo.grade}"></span>分)
+                                    </label>
+                                    <div class="col-xs-12">
+                                        <div class="radio">
+                                            <label for="example-radio1">
+                                                <input type="radio" id="example-radio1" name="example-radios" value="option1">
+                                                <span th:text="${paperVo.questionXztOptions.optionA}"></span>
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label for="example-radio2">
+                                                <input type="radio" id="example-radio2" name="example-radios" value="option2">
+                                                <span th:text="${paperVo.questionXztOptions.optionB}"></span>
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label for="example-radio3">
+                                                <input type="radio" id="example-radio3" name="example-radios" value="option3">
+                                                <span th:text="${paperVo.questionXztOptions.optionC}"></span>
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label for="example-radio3">
+                                                <input type="radio" id="example-radio4" name="example-radios" value="option3">
+                                                <span th:text="${paperVo.questionXztOptions.optionD}"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                </div>
+                    <!-- 选择题end-->
+                    <!-- 填空题start-->
+                   <div class="row" th:if="${paperVo.q_typeid} eq '2'">
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-8 card" >
+                        <div >
+
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label class="col-xs-12">
+                                        <span th:text="${paperVoStat.count}"></span>
+                                        <span th:text="${paperVo.questionTitle}"></span>
+                                        ( <span th:text="${paperVo.grade}"></span>分)
+                                    </label>
+                                    <div class="col-xs-12" style="margin-bottom: 20px">
+                                        <!--这是预览试卷，不用输入答案-->
+                                        <input class="form-control" type="text"  placeholder="请输入您答案..">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                </div>
+                    <!-- 填空题end-->
+                    <!-- 判断题start-->
+                   <div class="row" th:if="${paperVo.q_typeid} eq '3'">
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-8 card" >
+                        <div >
+
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label class="col-xs-12">
+                                        <span th:text="${paperVoStat.count}"></span>
+                                        <span th:text="${paperVo.questionTitle}"></span>
+                                        ( <span th:text="${paperVo.grade}"></span>分)
+                                    </label>
+                                    <div class="col-xs-12" style="margin-bottom: 20px">
+                                        <input type="radio"  name="example-radios3" value="1">正确
+                                        <input type="radio"  name="example-radios3" value="0">错误
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                </div>
+                    <!-- 判断题end-->
+                    <!-- 简答题start-->
+                   <div class="row" th:if="${paperVo.q_typeid} eq '4'">
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-8 card" >
+                        <div >
+
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label class="col-xs-12">
+                                        <span th:text="${paperVoStat.count}"></span>
+                                        <span th:text="${paperVo.questionTitle}"></span>
+                                        ( <span th:text="${paperVo.grade}"></span>分)
+                                    </label>
+                                    <div class="col-xs-12" style="margin-bottom: 20px">
+                                        <textarea class="form-control" name="example-textarea-input" rows="6"
+                                                  placeholder="内容.."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                </div>
+                </div>
+                    <!-- 简答题end-->
+                <!-- 提交按钮start-->
+                <div class="row">
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-8 card" >
+                        <div class="card-body">
+                            <div class="form-group">
+                                <div class="col-xs-12" style="margin-bottom: 20px;text-align: center">
+                                     <button class="btn btn-primary" onclick="javascript:history.back(-1)">返回</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                </div>
+                <!-- 提交按钮end-->
+
+            </div>
+
+         </main>
+
+</div>
+</div>
+
+<div th:include="~{views/common/include :: #jsStyle}"></div>
+<script type="text/javascript"  th:src="@{/static/js/jquery.serialize-object.min.js}"></script>
+
+
+
+<script type="text/javascript">
+
+</script>
+
+    <style>
+      .md-header{
+          margin-left: 0px;
+      }
+    .my-container {
+        float: left;
+        display: inline-block;
+        margin-right:30px;
+    }
+
+    .myLabel-content ,.myText-content,.myBtn-content{
+        float: left;
+        display: inline-block;
+        line-height: 40px;
+        margin-left: 10px;
+    }
+    .myLabel-content,.myText-content input[type='text'],.myBtn-content .btn {
+        height: 38px;
+        font-size: 15px;
+    }
+    .myBtn-content .btn {
+        margin-bottom: 10px;
+        margin-right: 20px;
+    }
+
+  .card {
+      margin-bottom: 0px;
+      background-color: #fff;
+      -webkit-box-shadow: 0 2px 3px rgba(0, 0, 0, 0.035);
+      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.035);
+  }
+</style>
+
+
+
+
+</body>
+</html>
