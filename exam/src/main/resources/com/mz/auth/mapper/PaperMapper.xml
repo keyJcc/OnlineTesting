@@ -14,10 +14,52 @@
         select * from exam_paper <include refid="whereSql"></include> order by id desc limit #{offset},#{page}
     </select>
 
+<!--    查询试卷预览的符合类，需要使用resultMap映射-->
+
+
+    <select id="previewPaper" parameterType="java.lang.Long" resultMap="PaperGenerateVoMap">
+        SELECT
+        p.id,p.`name`,p.startTime,p.endTime,
+        eq.id eid,eq.questionTitle,eq.questionAnswer,eq.q_typeid,eq.grade,
+        ex.id exid,ex.optionA,ex.optionB,ex.optionC,ex.optionC,ex.optionD,ex.questionId exquestionId
+        FROM
+        exam_paper p
+        JOIN exam_paper_question ep ON p.id=ep.paperId
+        JOIN exam_questionbank eq ON ep.questionId=eq.id
+        LEFT JOIN exam_xzt_options ex ON ex.questionId = eq.id
+        WHERE p.id= #{paperId}
+        ORDER BY eq.q_typeid
+    </select>
+
+    <resultMap id="PaperGenerateVoMap" type="com.mz.auth.entity.PaperGenerateVo">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="startTime" property="startTime"></result>
+        <result column="endTime" property="endTime"></result>
+        <collection property="questions" javaType="Question">
+            <id column="eid" property="id"></id>
+            <result column="questionTitle" property="questionTitle"></result>
+            <result column="questionAnswer" property="questionAnswer"></result>
+            <result column="grade" property="grade"></result>
+            <result column="q_typeid" property="q_typeid"></result>
+            <association property="questionXztOptions" javaType="com.mz.auth.entity.QuestionXztOptions">
+                <id column="exid" property="id"></id>
+                <result column="optionA" property="optionA"></result>
+                <result column="optionB" property="optionB"></result>
+                <result column="optionC" property="optionC"></result>
+                <result column="optionD" property="optionD"></result>
+                <result column="exquestionId" property="questionId"></result>
+            </association>
+        </collection>
+    </resultMap>
+
     <sql id = "whereSql">
         <where>
             <if test='name!=null and name.contains("")'>
             and name like concat('%',#{name},'%')
+            </if>
+            <if test="id!=null">
+                and id=#{id}
             </if>
         </where>
     </sql>

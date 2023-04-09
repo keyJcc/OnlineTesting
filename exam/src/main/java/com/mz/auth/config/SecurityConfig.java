@@ -41,7 +41,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
          http.authorizeRequests() //httpServletRequest的请求认证
-        .antMatchers("/static/**","/goRegPage","/teacher/addTeacher","/file/uploadFile")//对静态资源的放行
+        .antMatchers("/static/**","/goRegPage","/teacher/addTeacher","/file/uploadFile",
+                     "/favicon.ico","/front/index","/front/login","/front/getCode","/front/gotoRegPage",
+                    "/stu/regStu","/stu/login","/stu/*","/paperindex/listpage","/exam/popPaper/*"
+                     )//对静态资源的放行
         .permitAll()
          .anyRequest().authenticated()//除开放行的请求,其他请求就要经过认证
         .and().formLogin().and()//表示表单登录

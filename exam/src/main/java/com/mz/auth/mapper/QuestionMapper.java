@@ -74,4 +74,9 @@ public interface QuestionMapper {
      */
     @Delete("delete from exam_questionbank where id=#{id}")
     Integer deleteQuestion(Long id);
+
+    @Select("SELECT id\n" +
+            "FROM exam_questionbank\n" +
+            "WHERE q_typeid=#{q_typeid}")
+    List<Long> queryQuestionIdsByType(Long q_typeid);
 }

@@ -1,7 +1,9 @@
 package com.mz.auth.web.controller;
 
+import com.mz.auth.entity.PaperGenerateVo;
 import com.mz.auth.entity.Question;
 import com.mz.auth.query.QuestionQuery;
+import com.mz.auth.service.PaperService;
 import com.mz.auth.service.QuestionService;
 import com.mz.auth.util.MzResult;
 import com.mz.auth.util.PageList;
@@ -27,6 +29,9 @@ public class QuestionController {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private PaperService paperService;
 
 
     private String key = "question_list";
@@ -140,6 +145,8 @@ public class QuestionController {
             return MzResult.error("删除失败，请重试！");
         }
     }
+
+
 
 
 }

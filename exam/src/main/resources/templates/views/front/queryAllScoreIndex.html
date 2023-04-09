@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" xmlns:sec="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>在线考试系统</title>
+  <meta content="" name="descriptison">
+  <meta content="" name="keywords">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link th:href="@{/static/front/assets/vendor/bootstrap/css/bootstrap.min.css}"  rel="stylesheet">
+  <link th:href="@{/static/front/assets/vendor/icofont/icofont.min.css}"  rel="stylesheet">
+  <link th:href="@{/static/front/assets/vendor/boxicons/css/boxicons.min.css}"  rel="stylesheet">
+  <link th:href="@{/static/front/assets/vendor/animate.css/animate.min.css}"  rel="stylesheet">
+  <link th:href="@{/static/front/assets/vendor/remixicon/remixicon.css}"  rel="stylesheet">
+  <link th:href="@{/static/front/assets/vendor/owl.carousel/assets/owl.carousel.min.css}"  rel="stylesheet">
+  <link th:href="@{/static/front/assets/vendor/venobox/venobox.css}"  rel="stylesheet">
+  <link th:href="@{/static/front/assets/vendor/aos/aos.css}"  rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link th:href="@{/static/front/assets/css/style.css}"  rel="stylesheet">
+
+  <!--对话框-->
+  <link rel="stylesheet" th:href="@{/static/js/jconfirm/jquery-confirm.min.css}">
+
+</head>
+
+<body>
+
+
+
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="fixed-top ">
+    <div class="container d-flex align-items-center">
+
+      <h1 class="logo mr-auto"><a href="#header" class="scrollto">在线考试网</a></h1>
+
+      <nav class="nav-menu d-none d-lg-block">
+        <ul>
+          <li class="active"><a href="/front/index">首页</a></li>
+          <li><a href="/stu/queryScorePage">查询成绩</a></li>
+          <li><a href="/stu/queryAllScorePage">查询全科目成绩</a></li>
+          <li th:if="${session.stuUser == null}"><a href="/front/login">登录</a></li>
+          <li th:if="${session.stuUser != null}"><a href="/stu/logOut">退出</a></li>
+        </ul>
+      </nav><!-- .nav-menu -->
+
+    </div>
+  </header><!-- End Header -->
+
+  <!-- ======= Hero Section ======= -->
+  <section id="hero" class="d-flex justify-cntent-center align-items-center" style="height: 360px;">
+    <div id="heroCarousel" class="container carousel carousel-fade" data-ride="carousel">
+
+      <!-- Slide 1 -->
+      <div class="carousel-item active" >
+        <div class="carousel-container">
+          <h2 class="animated fadeInDown">
+            <form id="jdtEditForm" method="post">
+
+              <div class="form-group">
+
+
+<!--                <select style="width: 600px;height:46px;font-size: 20px" id="paperId">-->
+<!--                    <option> -请选择- </option>-->
+<!--                  &lt;!&ndash;展示试卷，循环取出从后台查询出来的试卷  papers为键名-->
+<!--                 th:value="${paper.id}，根据试卷id,把id传到后台，查询成绩，即选中一张试卷查询成绩 &ndash;&gt;-->
+<!--                    <option th:each="paper : ${papers}" th:value="${paper.id}">-->
+<!--                        <span th:text="${paper.name}"></span>&lt;!&ndash;paper.name试卷名称&ndash;&gt;-->
+<!--                    </option>-->
+<!--                </select>-->
+<!--                <button type="button" style="margin-top:10px;height:40px;font-size: 20px"-->
+<!--                        data-method='searchScore' class="btn btn-warning">搜索</button>-->
+              </div>
+              
+            </form>
+          </h2>
+          <p class="animated fadeInUp"></p> 
+        </div>
+      </div>
+
+
+
+    </div>
+  </section><!-- End Hero -->
+
+  <main id="main">
+
+    <!-- ======= Icon Boxes Section ======= -->
+    <section id="icon-boxes" class="icon-boxes" style="margin-top:100px">
+      <div class="container">
+
+        <div class="row" style="margin-top:20px">
+          <div class="col-sm-3 col-lg-3">
+          </div>
+          <div class="col-sm-12">
+            <div class="card">
+
+              <div class="card-body" id="scoreOrder" >
+
+
+                <table style=" width:1040px;">
+                  <tr style="background-color: #0c5460;color:white;text-align: center">
+                    <td>姓名</td><td>科目</td><td>总分</td><td>操作</td>
+                  </tr>
+                  <tr th:each="subject : ${allScores}" style="text-align: center">
+                    <td><span th:text="${subject.nickName}"></span></td>
+                    <td><span th:text="${subject.name}"></span></td>
+                    <td><span th:text="${subject.totalScore}"></span></td>
+                    <td><span style="font-size: 18px">
+
+                      <a th:href="@{'/stu/examDetailRecords?paperId='+${subject.paperId}+'&stuId='+${subject.stuId}}">回顾试卷</a></span>
+
+                    </td>
+                  </tr>
+                </table>
+
+                <!--<p>-->
+                  <!--<span style="font-size: 30px">姓名:</span>-->
+                  <!--<span style="font-size: 26px">张三</span>-->
+                <!--</p>-->
+                <!--<p>-->
+                  <!--<span style="font-size: 30px">科目:</span>-->
+                  <!--<span style="font-size: 26px">Java测试试卷</span>-->
+                <!--</p>-->
+                <!--<p>-->
+                  <!--<span style="font-size: 30px">总分:</span>-->
+                  <!--<span style="font-size: 26px;color:red;">100分</span>-->
+                <!--</p>-->
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-3 col-lg-3">
+          </div>
+        </div>
+        </div>
+		
+
+      </div>
+    </section><!-- End Icon Boxes Section -->
+    
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+
+    <div class="footer-newsletter">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6">
+            <h4></h4>
+            <p></p>
+          </div>
+          <div class="col-lg-6">
+           
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+
+          <div class="col-lg-4 col-md-6 footer-links">
+            <h4>用户连接</h4>
+            <ul>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">在线测试网</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">项目分享圈</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">学习交流圈</a></li>
+            </ul>
+          </div>
+
+           <div class="col-lg-4 col-md-6 footer-links">
+            <h4>我们理念</h4>
+            <ul>
+              <li>开放</li>
+              <li>创新</li>
+              <li>共赢</li>
+            </ul>
+          </div>
+
+		<div class="col-lg-4 col-md-6 footer-links">
+            <h4>联系方式</h4>
+          <ul>
+            <li>QQ:3393857689</li>
+            <li>email:3393857689@qq.com</li>
+            <li>tel:10000</li>
+          </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="copyright">
+        &copy; Copyright <strong><span>xxx</span></strong>. All Rights Reserved
+      </div>
+     
+    </div>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top"><i class="ri-arrow-up-line"></i></a>
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script th:src="@{/static/front/assets/vendor/jquery/jquery.min.js}"></script>
+  <script th:src="@{/static/front/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}" ></script>
+  <script th:src="@{/static/front/assets/vendor/jquery.easing/jquery.easing.min.js}" ></script>
+  <script th:src="@{/static/front/assets/vendor/php-email-form/validate.js}" ></script>
+  <script th:src="@{/static/front/assets/vendor/owl.carousel/owl.carousel.min.js}"></script>
+  <script th:src="@{/static/front/assets/vendor/venobox/venobox.min.js}"></script>
+  <script th:src="@{/static/front/assets/vendor/isotope-layout/isotope.pkgd.min.js}"></script>
+  <script th:src="@{/static/front/assets/vendor/aos/aos.js}"></script>
+    <script type="text/javascript"  th:src="@{/static/js/jconfirm/jquery-confirm.min.js}"></script>
+  <!-- Template Main JS File -->
+  <script th:src="@{/static/front/assets/js/main.js}"></script>
+  <script th:inline="javascript">
+       $(function(){
+           //公共变量
+           var paperId ;
+           var stuId;
+           //绑定事件
+           $("button,a").on('click',function(){
+               //获取到 a标签里面配置 data-method
+               var methodName = $(this).data('method');
+               if(methodName){
+                   doMethod[methodName]();
+               }
+           });
+
+           var doMethod={
+             //成绩查询
+               searchScore:function(){
+                 //查询试卷id
+                 var paperId = $("#paperId").val()
+                 //获取当前的登录用户的id
+                 var stuUser = [[${session.stuUser}]];
+                 var stuId = stuUser.id;
+                 var sendObj ={ //对象封装参数
+                    stuId:stuId,
+                    paperId:paperId
+                 }
+                 //发送ajax查询数据
+                 $.ajax({
+                   url:'/stu/queryScoreData',
+                   type:"POST",
+                   data:JSON.stringify(sendObj),
+                   dataType:'json',
+                   contentType:'application/json;charset=utf-8',
+                   success:function(data){//后台返回的数据
+                      var stuScoreObj = data;
+                      // scoreOrder 成绩单区域
+                     $("#scoreOrder").empty();//清空一下
+                     var scoreHtml = "<p>";
+                     scoreHtml += '<span style="font-size: 30px">姓名:</span>';
+                     scoreHtml += '<span style="font-size: 26px"> '+stuScoreObj.nickName+' </span>';
+                     scoreHtml += '</p>';
+                     scoreHtml += '<p>';
+                     scoreHtml += '<span style="font-size: 30px">试卷名称:</span>';
+                     scoreHtml += '<span style="font-size: 26px"> '+stuScoreObj.name+' </span>';
+                     scoreHtml += '</p>';
+                     scoreHtml += '<p>';
+                     scoreHtml += '<span style="font-size: 30px">试卷总分:</span>';
+                     scoreHtml += '<span style="font-size: 26px;color:red;"> '+stuScoreObj.totalScore+'分</span>';
+                     scoreHtml+="</p>";
+                     scoreHtml += '<p>';
+                     /* 回顾试卷， 该学生的这张试卷，路径后面传给后台 两个参数paperId和stuId*/    
+                     scoreHtml += '<span style="font-size: 30px"><a href="/stu/examDetailRecords?paperId='+stuScoreObj.paperId+'&stuId='+stuScoreObj.stuId+'">回顾试卷</a></span>';
+                     scoreHtml+="</p>";
+                     $("#scoreOrder").append(scoreHtml);//把内容追加到scoreOrder 成绩单区域
+                   }
+                 })
+               }
+               
+           }
+       })
+  </script>
+
+</body>
+
+</html>

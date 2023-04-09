@@ -1,7 +1,9 @@
 package com.mz.auth.mapper;
 
 import com.mz.auth.entity.Paper;
+import com.mz.auth.entity.PaperGenerateVo;
 import com.mz.auth.entity.PaperQuestion;
+import com.mz.auth.entity.TypeTotalVo;
 import com.mz.auth.query.PaperQuery;
 import org.apache.ibatis.annotations.*;
 
@@ -70,7 +72,7 @@ public interface PaperMapper {
     /**
      * 批量插入试卷题目关系
      * @param params
-     * @return
+     * @return 返回插入成功的数量
      */
 
     @Insert("<script>insert into exam_paper_question(paperId,questionId) " +
@@ -93,4 +95,22 @@ public interface PaperMapper {
 
     @Select("SELECT id,paperId,questionId FROM exam_paper_question WHERE paperId=#{paperId}")
     List<PaperQuestion> queryQuestionByPaperId(Long paperId);
+
+    /**
+     * sql较为复杂，使用xml文件形式
+     * @param paperId
+     * @return
+     */
+    PaperGenerateVo previewPaper(Long paperId);
+
+    /**
+     * 查询各自类型对应的数量
+     * @return
+     */
+    @Select("SELECT q_typeid,count(*) totalNum\n" +
+            "FROM exam_questionbank\n" +
+            "GROUP BY q_typeid")
+    List<TypeTotalVo> queryTypeTotal();
+
+    
 }

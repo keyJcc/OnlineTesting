@@ -1,11 +1,14 @@
 package com.mz.auth.service;
 
 import com.mz.auth.entity.Paper;
+import com.mz.auth.entity.PaperGenerateVo;
 import com.mz.auth.entity.PaperQuestion;
+import com.mz.auth.entity.TypeTotalVo;
 import com.mz.auth.query.PaperQuery;
 import com.mz.auth.util.PageList;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PaperService {
 
@@ -56,4 +59,25 @@ public interface PaperService {
      * @return
      */
     Integer diyPaperQuestion(PaperQuestion paperQuestion);
+
+    /**
+     * 获取试卷预览的复合类
+     * @param paperId
+     * @return
+     */
+    PaperGenerateVo previewPaper(Long paperId);
+
+    /**
+     * 获取所有题型各自总量
+     * @return
+     */
+    List<TypeTotalVo> queryTypeTotal();
+
+    /**
+     * 随机组卷
+     * @param sendMap 题型数量
+     * @return
+     */
+    Integer randomPaperQuestion(Map sendMap);
+
 }

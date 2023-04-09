@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" xmlns:sec="http://www.w3.org/1999/xhtml">>
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>在线考试系统</title>
+    <meta content="" name="descriptison">
+    <meta content="" name="keywords">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link th:href="@{/static/front/assets/vendor/bootstrap/css/bootstrap.min.css}"  rel="stylesheet">
+    <link th:href="@{/static/front/assets/vendor/icofont/icofont.min.css}"  rel="stylesheet">
+    <link th:href="@{/static/front/assets/vendor/boxicons/css/boxicons.min.css}"  rel="stylesheet">
+    <link th:href="@{/static/front/assets/vendor/animate.css/animate.min.css}"  rel="stylesheet">
+    <link th:href="@{/static/front/assets/vendor/remixicon/remixicon.css}"  rel="stylesheet">
+    <link th:href="@{/static/front/assets/vendor/owl.carousel/assets/owl.carousel.min.css}"  rel="stylesheet">
+    <link th:href="@{/static/front/assets/vendor/venobox/venobox.css}"  rel="stylesheet">
+    <link th:href="@{/static/front/assets/vendor/aos/aos.css}"  rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link th:href="@{/static/front/assets/css/style.css}"  rel="stylesheet">
+
+</head>
+
+<body>
+<!-- ======= Header ======= -->
+<header id="header" class="fixed-top ">
+    <div class="container d-flex align-items-center">
+
+        <h1 class="logo mr-auto"><a href="#header" class="scrollto">在线考试网</a></h1>
+
+        <nav class="nav-menu d-none d-lg-block">
+            <ul>
+                <li class="active"><a href="/front/index">首页</a></li>
+                <li><a href="/stu/queryScorePage">查询成绩</a></li>
+                <li><a href="/stu/queryAllScorePage">查询全科目成绩</a></li>
+                <li th:if="${session.stuUser == null}"><a href="/front/login">登录</a></li>
+                <li th:if="${session.stuUser != null}"><a href="/stu/logOut">退出</a></li>
+            </ul>
+        </nav><!-- .nav-menu -->
+
+    </div>
+</header><!-- End Header -->
+<!-- ======= Hero Section ======= -->
+<section id="hero" class="d-flex justify-cntent-center align-items-center">
+    <div id="heroCarousel" class="container carousel carousel-fade" data-ride="carousel">
+
+        <!-- Slide 1 -->
+        <div class="carousel-item active">
+            <div class="carousel-container">
+                <h2 class="animated fadeInDown">欢迎来到 <span>在线考试系统</span></h2>
+                <p class="animated fadeInUp"></p>
+            </div>
+        </div>
+
+        <a class="carousel-control-prev" href="#heroCarousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon bx bx-chevron-left" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+
+        <a class="carousel-control-next" href="#heroCarousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon bx bx-chevron-right" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+
+    </div>
+</section><!-- End Hero -->
+        <!--End 头部信息-->
+        <!--页面主要内容-->
+        <main id="main" class="coder-layout-content">
+
+            <div class="container-fluid" >
+                <div class="row">
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-8 card" >
+                        <div >
+                            <div class="card-header" style="text-align: center">
+                                <!--stuPaperQuestionVO即键名  后前台使用该对象（通过· 对象.属性/方法）-->
+                                <h2><span th:text="${stuPaperQuestionVO.name}"></span></h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 选择题start-->
+                <!--th:each="paperVo,paperVoStat 循环遍历出来-->
+                <!-- private List<StuQuestionQueryVO> stuQuestionsList = new ArrayList();即<StuQuestionQueryVO>-->
+                <div th:each="paperVo,paperVoStat : ${stuPaperQuestionVO.stuQuestionsList}">
+                    <div class="row" th:if="${paperVo.q_typeid} eq '1'">
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-8 card" >
+                            <div >
+
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label class="col-xs-12">
+                                            <span th:text="${paperVoStat.count}"></span>
+                                            <span th:text="${paperVo.questionTitle}"></span>
+                                            ( <span th:text="${paperVo.grade}"></span>分)
+                                        </label>
+                                        <div class="col-xs-12">
+                                            <div class="radio">
+                                                <label for="example-radio1">
+                                                    <input type="radio" id="example-radio1" name="example-radios" value="option1">
+                                                    <span th:text="${paperVo.questionXztOptions.optionA}"></span>
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <label for="example-radio2">
+                                                    <input type="radio" id="example-radio2" name="example-radios" value="option2">
+                                                    <span th:text="${paperVo.questionXztOptions.optionB}"></span>
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <label for="example-radio3">
+                                                    <input type="radio" id="example-radio3" name="example-radios" value="option3">
+                                                    <span th:text="${paperVo.questionXztOptions.optionC}"></span>
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <label for="example-radio3">
+                                                    <input type="radio" id="example-radio4" name="example-radios" value="option3">
+                                                    <span th:text="${paperVo.questionXztOptions.optionD}"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <label class="col-xs-12" style="color:red;font-weight: bold">
+                                            您的答案:<span th:text="${paperVo.stuAnswer}" style="margin-right: 20px"></span>
+                                            正确答案:<span th:text="${paperVo.correntAnswer}" style="margin-right: 20px"></span>
+                                            最终判断:<span th:if="${paperVo.stuAnswer == paperVo.correntAnswer}" style="margin-right: 20px">
+                                                        <img th:src="@{/static/icon/dui.png}" style="height: 50px;width: 50px"/>
+                                                     </span>
+                                                     <span th:if="${paperVo.stuAnswer != paperVo.correntAnswer}">
+                                                        <img th:src="@{/static/icon/cuo.png}" style="height: 50px;width: 50px"/>
+                                                     </span>
+                                            最终得分:<span th:text="${paperVo.correntScore}" style="margin-right: 20px"></span>
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                        </div>
+                    </div>
+
+                    <!-- 选择题end-->
+                    <!-- 填空题start-->
+
+                    <div class="row" th:if="${paperVo.q_typeid} eq '2'">
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-8 card" >
+                            <div >
+
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label class="col-xs-12">
+                                            <span th:text="${paperVoStat.count}"></span>
+                                            <span th:text="${paperVo.questionTitle}"></span>
+                                            ( <span th:text="${paperVo.grade}"></span>分)
+                                        </label>
+                                        <div class="col-xs-12" style="margin-bottom: 20px">
+                                            <input class="form-control" type="text"  placeholder="请输入您答案..">
+                                        </div>
+                                        <label class="col-xs-12" style="color:red;font-weight: bold">
+                                            您的答案:<span th:text="${paperVo.stuAnswer}" style="margin-right: 20px"></span>
+                                            正确答案:<span th:text="${paperVo.correntAnswer}" style="margin-right: 20px"></span>
+                                            最终判断:<span th:if="${paperVo.stuAnswer == paperVo.correntAnswer}" style="margin-right: 20px">
+                                                        <img th:src="@{/static/icon/dui.png}" style="height: 50px;width: 50px"/>
+                                                     </span>
+                                            <span th:if="${paperVo.stuAnswer != paperVo.correntAnswer}">
+                                                        <img th:src="@{/static/icon/cuo.png}" style="height: 50px;width: 50px"/>
+                                                     </span>
+                                            最终得分:<span th:text="${paperVo.correntScore}" style="margin-right: 20px"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                        </div>
+                    </div>
+
+                    <!-- 填空题end-->
+                    <!-- 判断题start-->
+
+                    <div class="row" th:if="${paperVo.q_typeid} eq '3'">
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-8 card" >
+                            <div >
+
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label class="col-xs-12">
+                                            <span th:text="${paperVoStat.count}"></span>
+                                            <span th:text="${paperVo.questionTitle}"></span>
+                                            ( <span th:text="${paperVo.grade}"></span>分)
+                                        </label>
+                                        <div class="col-xs-12" style="margin-bottom: 20px">
+                                            <input type="radio"  name="example-radios3" value="1">正确
+                                            <input type="radio"  name="example-radios3" value="0">错误
+                                        </div>
+                                        <label class="col-xs-12" style="color:red;font-weight: bold">
+                                            您的答案:<span th:text="${paperVo.stuAnswer}" style="margin-right: 20px"></span>
+                                            正确答案:<span th:text="${paperVo.correntAnswer}" style="margin-right: 20px"></span>
+                                            最终判断:<span th:if="${paperVo.stuAnswer == paperVo.correntAnswer}" style="margin-right: 20px">
+                                                        <img th:src="@{/static/icon/dui.png}" style="height: 50px;width: 50px"/>
+                                                     </span>
+                                            <span th:if="${paperVo.stuAnswer != paperVo.correntAnswer}">
+                                                        <img th:src="@{/static/icon/cuo.png}" style="height: 50px;width: 50px"/>
+                                                     </span>
+                                            最终得分:<span th:text="${paperVo.correntScore}" style="margin-right: 20px"></span>
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                        </div>
+                    </div>
+
+                    <!-- 判断题end-->
+                    <!-- 简答题start-->
+
+                    <div class="row" th:if="${paperVo.q_typeid} eq '4'">
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-8 card" >
+                            <div >
+
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label class="col-xs-12">
+                                            <span th:text="${paperVoStat.count}"></span>
+                                            <span th:text="${paperVo.questionTitle}"></span>
+                                            ( <span th:text="${paperVo.grade}"></span>分)
+                                        </label>
+                                        <div class="col-xs-12" style="margin-bottom: 20px">
+                                        <textarea class="form-control" name="example-textarea-input" rows="6"
+                                                  placeholder="内容.."></textarea>
+                                        </div>
+                                        <label class="col-xs-12" style="color:red;font-weight: bold">
+                                            您的答案:<span th:text="${paperVo.stuAnswer}" style="margin-right: 20px"></span>
+                                            正确答案:<span style="margin-right: 20px">根据老师判断给分!</span>
+                                            最终得分:<span th:text="${paperVo.correntScore}" style="margin-right: 20px"></span>
+
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                        </div>
+                    </div>
+                </div>
+                <!-- 简答题end-->
+                <!-- 提交按钮start-->
+                <div class="row">
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-8 card" >
+                        <div class="card-body">
+                            <div class="form-group">
+                                <div class="col-xs-12" style="margin-bottom: 20px;text-align: center">
+                                    <button class="btn btn-primary" type="submit" ><a href="http://localhost:9000/front/index">返回</a></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                </div>
+                <!-- 提交按钮end-->
+
+            </div>
+
+        </main>
+
+    </div>
+</div>
+
+<!-- Vendor JS Files -->
+<script th:src="@{/static/front/assets/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/static/front/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}" ></script>
+<script th:src="@{/static/front/assets/vendor/jquery.easing/jquery.easing.min.js}" ></script>
+<script th:src="@{/static/front/assets/vendor/php-email-form/validate.js}" ></script>
+<script th:src="@{/static/front/assets/vendor/owl.carousel/owl.carousel.min.js}"></script>
+<script th:src="@{/static/front/assets/vendor/venobox/venobox.min.js}"></script>
+<script th:src="@{/static/front/assets/vendor/isotope-layout/isotope.pkgd.min.js}"></script>
+<script th:src="@{/static/front/assets/vendor/aos/aos.js}"></script>
+
+<!-- Template Main JS File -->
+<script th:src="@{/static/front/assets/js/main.js}"></script>
+
+
+<script type="text/javascript">
+
+</script>
+
+<style>
+    .md-header{
+        margin-left: 0px;
+    }
+    .my-container {
+        float: left;
+        display: inline-block;
+        margin-right:30px;
+    }
+
+    .myLabel-content ,.myText-content,.myBtn-content{
+        float: left;
+        display: inline-block;
+        line-height: 40px;
+        margin-left: 10px;
+    }
+    .myLabel-content,.myText-content input[type='text'],.myBtn-content .btn {
+        height: 38px;
+        font-size: 15px;
+    }
+    .myBtn-content .btn {
+        margin-bottom: 10px;
+        margin-right: 20px;
+    }
+
+    .card {
+        margin-bottom: 0px;
+        background-color: #fff;
+        -webkit-box-shadow: 0 2px 3px rgba(0, 0, 0, 0.035);
+        box-shadow: 0 2px 3px rgba(0, 0, 0, 0.035);
+    }
+</style>
+
+
+
+
+</body>
+</html>

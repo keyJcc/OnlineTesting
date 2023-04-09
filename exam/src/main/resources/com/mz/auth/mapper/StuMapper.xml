@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.mz.auth.mapper.StuMapper">
+    <!--    过滤条件-->
+    <sql id="whereSql">
+        <where>
+            <if test="name!=null and name !=''">
+                and name like concat('%',#{name},'%')
+            </if>
+
+        </where>
+    </sql>
+
+    <select id="queryTotalScore" parameterType="com.mz.auth.entity.StuScoreVo" resultType="com.mz.auth.entity.StuScoreVo">
+        SELECT
+        s.id stuId,
+        s.nickName,
+        es.paperId,
+        ep.`name`,
+        SUM(es.correntScore) totalScore
+        FROM exam_scoredetail es
+        JOIN t_student s ON s.id = es.stuId
+        JOIN exam_paper ep ON ep.id = es.paperId
+        WHERE
+            es.paperId = #{paperId} and s.id = #{stuId}
+    </select>
+</mapper>
